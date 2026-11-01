@@ -1,0 +1,94 @@
+library IEEE; 
+use IEEE.STD_LOGIC_1164.ALL; 
+use IEEE.NUMERIC_STD.ALL; 
+ 
+entity mod6_counter is 
+    Port ( 
+        clk : in STD_LOGIC; 
+        rst : in STD_LOGIC; 
+        q : out STD_LOGIC_VECTOR(3 downto 0) 
+    ); 
+end mod6_counter; 
+ 
+architecture Behavioral of mod6_counter is 
+ 
+    signal count : unsigned(3 downto 0) := "0000"; 
+    signal clk_count : integer range 0 to 49999999 := 0; 
+ 
+begin 
+ 
+    process(clk, rst) 
+    begin 
+ 
+        if rst = '1' then 
+            count <= "0000"; 
+            clk_count <= 0; 
+ 
+        elsif rising_edge(clk) then 
+ 
+            if clk_count = 49999999 then 
+                clk_count <= 0; 
+ 
+                if count = 5 then 
+                    count <= "0000"; 
+                else 
+                    count <= count + 1; 
+                end if; 
+ 
+            else 
+                clk_count <= clk_count + 1; 
+            end if; 
+ 
+        end if; 
+ 
+    end process; 
+ 
+    q <= std_logic_vector(count); 
+ 
+end Behavioral; 
+ 
+TESTBENCH: 
+ 
+library IEEE; 
+use IEEE.STD_LOGIC_1164.ALL; 
+ 
+entity mod6_counter_tb is 
+end mod6_counter_tb; 
+ 
+architecture Behavioral of mod6_counter_tb is 
+ 
+    signal clk : STD_LOGIC := '0'; 
+    signal rst : STD_LOGIC := '1'; 
+    signal q : STD_LOGIC_VECTOR(3 downto 0); 
+ 
+begin 
+ 
+    -- Connect testbench to MOD-6 counter 
+    DUT : entity work.mod6_counter 
+        port map ( 
+            clk => clk, 
+            rst => rst, 
+            q => q 
+        ); 
+ 
+    -- Generate clock 
+    clk <= not clk after 5 ns; 
+ 
+    process 
+    begin 
+ 
+        -- Reset 
+        rst <= '1'; 
+        wait for 20 ns; 
+ 
+        -- Start counting 
+        rst <= '0'; 
+ 
+        -- Let counter run 
+        wait for 500 ns; 
+ 
+        wait; 
+ 
+    end process; 
+ 
+end Behavioral;

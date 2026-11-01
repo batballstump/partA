@@ -1,0 +1,69 @@
+library IEEE; 
+use IEEE.STD_LOGIC_1164.ALL; 
+use IEEE.STD_LOGIC_UNSIGNED.ALL; 
+ 
+entity alu4bit is 
+    port ( 
+        n1 : in STD_LOGIC_VECTOR(3 downto 0); 
+        n2 : in STD_LOGIC_VECTOR(3 downto 0); 
+        op : in STD_LOGIC_VECTOR(2 downto 0); 
+        res : out STD_LOGIC_VECTOR(3 downto 0); 
+        flag : out STD_LOGIC 
+    ); 
+end alu4bit; 
+ 
+architecture Behavioral of alu4bit is 
+ 
+begin 
+ 
+    process(n1, n2, op) 
+        variable temp : STD_LOGIC_VECTOR(4 downto 0); 
+    begin 
+ 
+        flag <= '0'; 
+ 
+        case op is 
+ 
+            -- Addition 
+            when "000" => 
+                temp := ('0' & n1) + n2; 
+                res <= temp(3 downto 0); 
+                flag <= temp(4); 
+ 
+            -- Subtraction 
+            when "001" => 
+                if (n1 > n2) then 
+                    res <= n1 - n2; 
+                else 
+                    res <= n2 - n1; 
+                end if; 
+ 
+            -- AND 
+            when "010" => 
+                res <= n1 and n2; 
+ 
+            -- OR 
+            when "011" => 
+                res <= n1 or n2; 
+ 
+            -- XOR 
+            when "100" => 
+                res <= n1 xor n2; 
+ 
+            -- NOR 
+            when "101" => 
+                res <= n1 nor n2; 
+ 
+            -- NOT 
+            when "110" => 
+                res <= not n1; 
+ 
+            -- Default 
+            when others => 
+                res <= n2; 
+ 
+        end case; 
+ 
+    end process; 
+ 
+end Behavioral;
